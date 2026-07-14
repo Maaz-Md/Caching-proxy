@@ -1,5 +1,20 @@
 const express = require("express");
 
+// function to remove content-encoding header 
+function getFilteredHeaders(headers) {
+    const filteredHeaders = {};
+
+    headers.forEach((value, key) => {
+        const lowerKey = key.toLowerCase();
+
+        if(lowerKey !== "content-encoding") {
+            filteredHeaders[key] = value;
+        }
+    })
+
+    return filteredHeaders;
+}
+
 function startServer({ port, origin }) {
 
     const app = express();
@@ -45,9 +60,10 @@ function startServer({ port, origin }) {
             // converts JSON to js object
             const body = await response.json();
 
+            const filteredHeaders = getFilteredHeaders(response.headers);
 
             const responseToCache = {
-                headers: Object.fromEntries(response.headers.entries()),
+                headers: filteredHeaders,
                 body
             }
 
@@ -55,9 +71,9 @@ function startServer({ port, origin }) {
             cache.set(resource, responseToCache);
 
             //forward headers to client
-            response.headers.forEach((value, key) => {
+            for (const [key, value] of Object.entries(filteredHeaders)) {
                 res.setHeader(key, value);
-            })
+            }
 
             // custom header
             res.setHeader("X-Cache", "MISS");
