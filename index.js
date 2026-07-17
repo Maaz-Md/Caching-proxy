@@ -89,9 +89,20 @@ function startServer({ port, origin }) {
             });
         }
     });
+    
+
+    app.delete("/cache", (req, res) => {
+        cache.clear();
+
+        res.status(200).json({
+            message: "Cached cleared successfully"
+        })
+    });
+
 
     app.listen(port, () => {
         console.log(`Proxy Server is running on  http://localhost:${port}`);
+        console.log(`Try: http://localhost:${port}/products`);
     });
 
 }
