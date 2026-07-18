@@ -38,3 +38,7 @@ caching-proxy --port 3000 --origin https://dummyjson.com
 ```bash
 caching-proxy --clear-cache
 ```
+
+# Limitations
+- **Uses an in-memory cache (data is lost when the server restarts).**
+- **Supports single-resource routes (for example, /products) in the current implementation.**
